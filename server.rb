@@ -9,33 +9,31 @@ class Server
     @ip = ip
     @port = port
     @server = TCPServer.open(@ip, @port)
-    @games = []
+    @games = {}
     @game = Game.new
   end
 
   def start
     loop do
-      conn = server.accept
-      request = conn.gets
-      request_url ||= request.split[1]
-      case request_url
-      when "/"
-        conn.puts 'Welcome to the game'
-        conn.puts 'Hit /start endpoint to begin.'
-      when '/start'
-        @game = Game.new
-        @games << @game
-        conn.puts @game.status
-      when %r(show\/\d+)
-        id = request_url.sub('/show/', '')
-        conn.puts id
-      when '/show'
-        # conn.puts @games
-        conn.puts @games.map(&:status)
-      else
-        conn.puts 'I don\'t understand'
+      Thread.start(server.accept) do |session|
+        request = session.gets
+        request_url ||= request.split[1]
+        case request_url
+        when '/'
+          session.puts 'Welcome to the game'
+          session.puts 'Hit /start endpoint to begin.'
+        when '/start'
+          game = Game.new
+          @games[session.__id__] = game
+          session.puts @games
+        when %r{show\/\d+}
+          id = request_url.sub('/show/', '').to_i
+          session.puts @games[id] ? @games[id].status : 'Game not found'
+        else
+          session.puts 'I don\'t understand'
+        end
+        session.close
       end
-      conn.close
     end
   end
 end

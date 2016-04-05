@@ -6,7 +6,7 @@ class Game
   end
 
   def shoot
-    return 'Wrong action' unless turn=='shoot'
+    return 'Wrong action' unless turn == 'shoot'
     'Good action'
   end
 end

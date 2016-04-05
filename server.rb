@@ -1,4 +1,5 @@
 require 'socket'
+require 'json'
 require './game'
 
 class Server
@@ -16,26 +17,21 @@ class Server
   def start
     loop do
       Thread.start(server.accept) do |session|
-        request = session.gets
-        request_url ||= request.split[1]
+        request_url = session.gets.split[1]
         case request_url
         when '/'
-          session.puts 'Welcome to the game'
-          session.puts 'Hit /start endpoint to begin.'
-        when '/start'
           @game = Game.new
           @games[session.object_id] = @game
+          response = @games
+          session.puts response.to_json
+
+        when '/show'
           session.puts @games
-        when %r{show\/\d+}
-          id = request_url.sub('/show/', '').to_i
-          if @games[id]
-            session.puts @games
-          else
-            session.puts 'Not found'
-          end
+
         when %r{shoot\/\d+}
           id = request_url.sub('/shoot/', '').to_i
           session.puts @games[id] ? @games[id].shoot : 'Not found'
+
         else
           session.puts 'I don\'t understand'
         end

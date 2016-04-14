@@ -11,7 +11,6 @@ class Server
     @port = port
     @server = TCPServer.open(@ip, @port)
     @games = {}
-    @game = Game.new
   end
 
   def start
@@ -21,16 +20,20 @@ class Server
         case request_url
         when '/'
           @game = Game.new
-          @games[session.object_id] = @game
-          response = @games
-          session.puts response.to_json
+          id = session.object_id
+          @games[id] = @game
+          session.puts Hash[id, @game.status].to_json
 
-        when '/show'
-          session.puts @games
+        when '/all'
+          session.puts @games.to_json
 
-        when %r{shoot\/\d+}
-          id = request_url.sub('/shoot/', '').to_i
+        when %r{\d+\/shoot}
+          id = request_url[/\d+/].to_i
           session.puts @games[id] ? @games[id].shoot : 'Not found'
+
+        when %r{\d+\/show}
+          id = request_url[/\d+/].to_i
+          session.puts @games[id] ? @games[id].status.to_json : 'Not found'
 
         else
           session.puts 'I don\'t understand'

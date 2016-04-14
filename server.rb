@@ -31,6 +31,10 @@ class Server
           id = request_url[/\d+/].to_i
           session.puts @games[id] ? @games[id].shoot : 'Not found'
 
+        when %r{\d+\/save}
+          id = request_url[/\d+/].to_i
+          session.puts @games[id] ? @games[id].save : 'Not found'
+
         when %r{\d+\/show}
           id = request_url[/\d+/].to_i
           session.puts @games[id] ? @games[id].status.to_json : 'Not found'

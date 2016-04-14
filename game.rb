@@ -2,27 +2,25 @@ class Game
   attr_accessor :status, :result
   def initialize
     turn = %w(shoot save).sample
-    @result = {scored: 0, saves: 0}
+    @result = {shoot: [], save: []}
     @status = { result: result, turn: turn, round: 0 }
   end
 
   def shoot
-    return 'Wrong action' unless status[:turn] == 'shoot'
-    status[:round] += 1
-    result[:scored] += play
-    status[:turn] = 'save'
-    status.to_json
+    play('shoot')
   end
 
   def save
-    return 'Wrong action' unless turn == 'save'
-    self.turn = 'shoot'
-    'status'
+    play('save')
   end
 
   private
 
-  def play
-    rand(2)
+  def play(action)
+    return 'Wrong action' unless status[:turn] == action
+    status[:turn] = action == 'shoot' ? 'save' : 'shoot'
+    status[:round] += 1
+    result[action.to_sym] << rand(2)
+    status.to_json
   end
 end

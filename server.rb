@@ -27,13 +27,15 @@ class Server
         when '/all'
           session.puts @games.to_json
 
-        when %r{\d+\/shoot}
+        when %r{\d+\/shoot\/\d+}
           id = request_url[/\d+/].to_i
-          session.puts @games[id] ? @games[id].shoot : 'Not found'
+          coor = request_url[/\d+$/].to_i
+          session.puts @games[id] ? @games[id].shoot(coor) : 'Not found'
 
-        when %r{\d+\/save}
+        when %r{\d+\/save\/\d+}
           id = request_url[/\d+/].to_i
-          session.puts @games[id] ? @games[id].save : 'Not found'
+          coor = request_url[/\d+$/].to_i
+          session.puts @games[id] ? @games[id].save(coor) : 'Not found'
 
         when %r{\d+\/show}
           id = request_url[/\d+/].to_i

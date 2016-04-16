@@ -1,29 +1,40 @@
 class Penalty
-  attr_reader :xy, :reaction
+  attr_reader :action, :reaction
   def initialize(coor)
-    @xy = coor
-    @reaction = rand(6) * 10 + rand(4)
+    @action = translate(coor)
+    @reaction = [rand(6), rand(4)]
+    @gate = [4, 2]
   end
 
   def shoot
-    return 'missed' unless on_target(xy)
-    return 'scored' if on_target(xy) && !saved
-    'saved'
+    if on_target(action) && !saved
+      1
+    else
+      0
+    end
   end
 
   def save
-    return 'missed' unless on_target(reaction)
-    return 'saved' if on_target(xy) && saved
-    return 'let in' if on_target(reaction) && !saved
+    if on_target(reaction) && !saved
+      # scored
+      1
+    else
+      # saved or missed
+      0
+    end
   end
 
   private
 
+  def translate(coor)
+    [coor/10,coor%10]
+  end
+
   def on_target(xy)
-    !(xy/10>4 || xy%10>2)
+    xy[0]<5 && xy[1]<3
   end
 
   def saved
-    xy == reaction
+    action == reaction
   end
 end

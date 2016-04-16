@@ -3,29 +3,31 @@ class Game
   attr_accessor :status, :result
   def initialize
     turn = %w(shoot save).sample
-    @result = { shots: [], saves: [] }
-    @status = { result: result, turn: turn, round: 1 }
+    @result = { you: [], computer: [] }
+    @status = { result: result, turn: turn, round: 1, score: [0,0] }
   end
 
   def shoot(coor)
     return 'Wrong action' unless status[:turn] == 'shoot'
-    result[:shots] << Penalty.new(coor).shoot
+    result[:you] << Penalty.new(coor).shoot
     status[:turn] = 'save'
+    update_result
     status.to_json
   end
 
   def save(coor)
     return 'Wrong action' unless status[:turn] == 'save'
-    result[:saves] << Penalty.new(coor).save
+    result[:computer] << Penalty.new(coor).save
     status[:turn] = 'shoot'
+    update_result
     status.to_json
   end
 
   private
 
-  def play(action)
-    status[:turn] = action == 'shoot' ? 'save' : 'shoot'
-    result[action.to_sym] << rand(2)
-    status.to_json
+  def update_result
+    status[:round] = result[:you].size
+    status[:score][0] = result[:you].reduce(0,:+)
+    status[:score][1] = result[:computer].reduce(0,:+)
   end
 end

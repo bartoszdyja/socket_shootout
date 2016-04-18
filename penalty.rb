@@ -1,40 +1,30 @@
 class Penalty
-  attr_reader :action, :reaction
+  attr_reader :player, :computer, :gate
   def initialize(coor)
-    @action = translate(coor)
-    @reaction = [rand(6), rand(4)]
-    @gate = [4, 2]
+    @gate = { width: 4, height: 2 }
+    @player = translate(coor)
+    @computer = [rand(gate[:width] + 1), rand(gate[:height] + 1)] # simulate random shots
   end
 
   def shoot
-    if on_target(action) && !saved
-      1
-    else
-      0
-    end
+    on_target(player) && !saved ? 1 : 0
   end
 
   def save
-    if on_target(reaction) && !saved
-      # scored
-      1
-    else
-      # saved or missed
-      0
-    end
+    on_target(computer) && !saved ? 1 : 0
   end
 
   private
 
   def translate(coor)
-    [coor/10,coor%10]
+    [coor / 10, coor % 10]
   end
 
   def on_target(xy)
-    xy[0]<5 && xy[1]<3
+    xy[0] <= gate[:width] && xy[1] <= gate[:height]
   end
 
   def saved
-    action == reaction
+    player == computer
   end
 end

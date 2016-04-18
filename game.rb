@@ -1,4 +1,5 @@
 require './penalty'
+
 class Game
   attr_accessor :status, :result
   def initialize
@@ -12,7 +13,6 @@ class Game
     result[:you] << Penalty.new(coor).shoot
     status[:turn] = 'save'
     update_result
-    status.to_json
   end
 
   def save(coor)
@@ -20,7 +20,6 @@ class Game
     result[:computer] << Penalty.new(coor).save
     status[:turn] = 'shoot'
     update_result
-    status.to_json
   end
 
   private
@@ -29,5 +28,6 @@ class Game
     status[:round] = result[:you].size
     status[:score][0] = result[:you].reduce(0,:+)
     status[:score][1] = result[:computer].reduce(0,:+)
+    status.to_json
   end
 end

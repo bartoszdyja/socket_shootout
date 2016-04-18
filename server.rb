@@ -11,6 +11,7 @@ class Server
     @port = port
     @server = TCPServer.open(@ip, @port)
     @games = {}
+    puts "Server started on: #{ip}:#{port}"
   end
 
   def start
@@ -49,5 +50,3 @@ class Server
     end
   end
 end
-
-Server.new('localhost', '1234').start

@@ -3,15 +3,17 @@ class Penalty
   def initialize(coor)
     @gate = { width: 4, height: 2 }
     @player = translate(coor)
-    @computer = [rand(gate[:width] + 1), rand(gate[:height] + 1)] # simulate random shots
+    @computer = [rand(gate[:width] + 1), rand(gate[:height] + 1)] # TODO: simulate random shots
   end
 
   def shoot
     on_target(player) && !saved ? 1 : 0
+    # TODO: add striker and cooridinates info
   end
 
   def save
     on_target(computer) && !saved ? 1 : 0
+    # TODO: add goalkeeper and coordinates info
   end
 
   private

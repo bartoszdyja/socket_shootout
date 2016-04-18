@@ -13,6 +13,7 @@ class Game
     result[:you] << Penalty.new(coor).shoot
     status[:turn] = 'save'
     update_result
+
   end
 
   def save(coor)
